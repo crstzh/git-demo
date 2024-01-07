@@ -1,0 +1,38 @@
+# 设置监控的文件夹路径
+$folderPath = "C:\Users\zhanghui\crstzh\git-demo\.git"
+
+# 创建 FileSystemWatcher 对象
+$watcher = New-Object System.IO.FileSystemWatcher
+$watcher.Path = $folderPath
+$watcher.IncludeSubdirectories = $true
+
+# 注册事件处理程序
+Register-ObjectEvent -InputObject $watcher -EventName Created -Action {
+    $eventArgs = $Event.SourceEventArgs
+    Write-Host "File created: $($eventArgs.FullPath)"
+}
+
+Register-ObjectEvent -InputObject $watcher -EventName Changed -Action {
+    $eventArgs = $Event.SourceEventArgs
+    Write-Host "File changed: $($eventArgs.FullPath)"
+}
+
+Register-ObjectEvent -InputObject $watcher -EventName Deleted -Action {
+    $eventArgs = $Event.SourceEventArgs
+    Write-Host "File deleted: $($eventArgs.FullPath)"
+}
+
+Register-ObjectEvent -InputObject $watcher -EventName Renamed -Action {
+    $eventArgs = $Event.SourceEventArgs
+    Write-Host "File renamed: $($eventArgs.OldFullPath) -> $($eventArgs.FullPath)"
+}
+
+# 启动监控
+$watcher.EnableRaisingEvents = $true
+
+# 监听用户输入以终止脚本
+Write-Host "Press Enter to stop monitoring..."
+# $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+
+# 停止监控
+# $watcher.EnableRaisingEvents = $false
